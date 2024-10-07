@@ -18,6 +18,10 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: false,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
     store: MongoStore.create({
       mongoUrl: process.env.MONGO_URI,
       dbName: "TuitionApp",
