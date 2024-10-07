@@ -13,10 +13,7 @@ router.get("/", (req, res) => {
       .then((classes) => {
         res.json(classes);
       });
-    console.log("Classes retrieved");
-  } catch (err) {
-    console.log(err);
-  }
+  } catch (err) {}
 });
 
 // router.patch("/incrementspace/:id", async (req, res) => {
@@ -38,19 +35,19 @@ router.get("/", (req, res) => {
 //     req.session.cart.push({ ...nonExistingItem, space: 1 });
 //   }
 //   try {
-//     console.log(req.session.cart);
+//
 //     await db.collection("class").updateOne({ _id: id }, { $inc: { space: 1 } });
 //     res.status(200).json({ message: "Space incremented" });
-//     console.log("Space incremented");
+//
 //   } catch (err) {
-//     console.log(err);
+//
 //   }
 // });
 
 // router.patch("/decrementspace/:id", async (req, res) => {
 //   const id = req.params.id;
-//   console.log("Decrementing space");
-//   console.log(req.session.cart);
+//
+//
 //   if (req.session.cart?.length > 0 || req.session.cart) {
 //     req.session.cart.forEach((element) => {
 //       if (element._id === id) {
@@ -70,20 +67,18 @@ router.get("/", (req, res) => {
 
 //   // Set space to 1 in cart
 
-//   console.log(id);
+//
 //   try {
-//     console.log(req.session.cart);
+//
 //     await db
 //       .collection("class")
 //       .updateOne({ _id: new ObjectId(id) }, { $inc: { space: -1 } });
 //     res.status(200).json({ message: "Space decremented" });
-//     console.log("Space decremented");
+//
 //   } catch (err) {
-//     console.log(err);
+//
 //   }
 // });
-
-router.get("/search", (req, res) => {});
 
 router.post("/checkout", async (req, res) => {
   const { name, cart } = req.body;
@@ -107,11 +102,39 @@ router.post("/checkout", async (req, res) => {
     });
 
     db.collection("cart").insertOne(req.body);
-    console.log("Class added to cart");
+
     res.status(200).json({ message: "Class added" });
   } catch (err) {
     res.status(500).json({ message: "Error adding class" });
-    console.log(err);
+  }
+});
+
+router.get("/search", async (req, res) => {
+  const { search } = req.query;
+
+  try {
+    if (search) {
+      const result = await db
+        .collection("class")
+        .find({
+          $or: [
+            { subject: { $regex: search, $options: "i" } },
+            { location: { $regex: search, $options: "i" } },
+          ],
+        })
+        .toArray();
+      res.status(200).json(result);
+    } else {
+      await db
+        .collection("class")
+        .find()
+        .toArray()
+        .then((result) => {
+          res.status(200).json(result);
+        });
+    }
+  } catch (err) {
+    res.status(500).json({ message: "Error searching for class" });
   }
 });
 
