@@ -91,21 +91,24 @@ router.post("/order", async (req, res) => {
       res.status(200).json({ message: "Class already booked with that name" });
       return;
     }
-    // Decrement space available per class
-    cart.forEach(async (element) => {
-      await db
-        .collection("lesson")
-        .updateOne(
-          { _id: new ObjectId(element._id) },
-          { $inc: { space: -element.space } }
-        );
-    });
 
     db.collection("order").insertOne(req.body);
 
     res.status(200).json({ message: "Class added" });
   } catch (err) {
     res.status(500).json({ message: "Error adding class" });
+  }
+});
+
+router.put("/lesson", async (req, res) => {
+  const { body } = req;
+
+  try {
+    await db
+      .collection("lesson")
+      .updateOne({ _id: new ObjectId(body._id) }, { $set: body });
+  } catch {
+    res.status(500).json({ message: "Error updating lesson" });
   }
 });
 
