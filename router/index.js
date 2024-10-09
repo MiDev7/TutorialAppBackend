@@ -102,12 +102,20 @@ router.post("/order", async (req, res) => {
 
 router.put("/lesson", async (req, res) => {
   const { body } = req;
-
+  const data = {
+    subject: body.subject,
+    location: body.location,
+    price: body.price,
+    space: body.space,
+  };
+  console.log(data);
   try {
     await db
       .collection("lesson")
-      .updateOne({ _id: new ObjectId(body._id) }, { $set: body });
-  } catch {
+      .updateOne({ _id: new ObjectId(body._id) }, { $set: data });
+    res.status(200).json({ message: "Lesson updated" });
+  } catch (err) {
+    console.log(err);
     res.status(500).json({ message: "Error updating lesson" });
   }
 });
