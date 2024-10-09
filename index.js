@@ -4,6 +4,7 @@ import router from "./router/index.js";
 import MongoStore from "connect-mongo";
 import session from "express-session";
 import cors from "cors";
+import logger from "./logger.js";
 
 dotenv.config();
 
@@ -28,6 +29,9 @@ app.use(
     }),
   })
 );
+
+app.use(logger);
+
 app.use("/", router);
 
 app.listen(process.env.PORT, () => {
