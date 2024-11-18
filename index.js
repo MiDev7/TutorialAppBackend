@@ -31,7 +31,7 @@ app.use(
   })
 );
 
-app.use(morgan('combined');
+app.use(morgan('combined'));
 
 app.use("/", router);
 
