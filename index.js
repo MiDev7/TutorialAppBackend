@@ -6,15 +6,22 @@ import MongoStore from "connect-mongo";
 import session from "express-session";
 import cors from "cors";
 
-
+// Initiate .env file
 dotenv.config();
 
+// Create express app
 const app = express();
+
+// Define a custom port for local usage
 const PORT = 3000;
 
+// Set app to make use of json file format
 app.use(express.json());
+
+// Use cross-origin resourse sharing for security purposes
 app.use(cors());
 
+// Define parameter for session and cookies, implemented for scalability
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -31,12 +38,16 @@ app.use(
   })
 );
 
+// Add morgan as a logger for debugging
 app.use(morgan('combined'));
 
+// Define main route
 app.use("/", router);
 
+// Define route for static file
 app.use("/static", express.static("public"));
 
+// Only for local usage only
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port http://localhost:${PORT}`);
 });
