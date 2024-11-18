@@ -73,9 +73,25 @@ router.get("/search", async (req, res) => {
           $or: [
             { subject: { $regex: search, $options: "i" } },
             { location: { $regex: search, $options: "i" } },
-            { price: { $regex: search, $options: "i" } },
-            { space: { $regex: search, $options: "i" } },
-          ],
+	    {
+		$expr: {
+			$regexMatch: {
+				input: {$toString: "$price"},
+				regex: search,
+				options: "i"
+			}
+		}
+	    },
+  	    {
+            	$expr: {
+       			 $regexMatch: {
+          			input: { $toString: "$space" },
+         			 regex: search,
+            			 options: 'i'
+               		}
+		}
+           }
+	  ]
         })
 	.sort({subject: 1})
         .toArray();
