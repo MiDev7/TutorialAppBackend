@@ -4,6 +4,8 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
+
+// GET route get all the lessons in the lesson collection
 router.get("/lessons", (req, res) => {
   req.session.cart = [];
   try {
@@ -16,70 +18,7 @@ router.get("/lessons", (req, res) => {
   } catch (err) {}
 });
 
-// router.patch("/incrementspace/:id", async (req, res) => {
-//   const id = req.params.id;
-//   if (req.session.cart) {
-//     req.session.cart.array.forEach((element) => {
-//       if (element._id === id) {
-//         element.space -= 1;
-//         if (element.space === 0) {
-//           req.session.cart.splice(req.session.cart.indexOf(element), 1);
-//         }
-//       }
-//     });
-//   } else {
-//     let nonExistingItem = await db
-//       .collection("class")
-//       .findOne({ _id: new ObjectId(id) });
-
-//     req.session.cart.push({ ...nonExistingItem, space: 1 });
-//   }
-//   try {
-//
-//     await db.collection("class").updateOne({ _id: id }, { $inc: { space: 1 } });
-//     res.status(200).json({ message: "Space incremented" });
-//
-//   } catch (err) {
-//
-//   }
-// });
-
-// router.patch("/decrementspace/:id", async (req, res) => {
-//   const id = req.params.id;
-//
-//
-//   if (req.session.cart?.length > 0 || req.session.cart) {
-//     req.session.cart.forEach((element) => {
-//       if (element._id === id) {
-//         element.space += 1;
-//       } else {
-//         req.session.cart.push({ ...element, space: 1 });
-//       }
-//     });
-//   } else {
-//     let nonExistingItem = await db
-//       .collection("class")
-//       .findOne({ _id: new ObjectId(id) });
-
-//     req.session.cart = [{ ...nonExistingItem, space: 1 }];
-//     req.session.save();
-//   }
-
-//   // Set space to 1 in cart
-
-//
-//   try {
-//
-//     await db
-//       .collection("class")
-//       .updateOne({ _id: new ObjectId(id) }, { $inc: { space: -1 } });
-//     res.status(200).json({ message: "Space decremented" });
-//
-//   } catch (err) {
-//
-//   }
-// });
-
+// POST route to add order to the order collection
 router.post("/order", async (req, res) => {
   const { name, cart } = req.body;
 
@@ -100,6 +39,8 @@ router.post("/order", async (req, res) => {
   }
 });
 
+
+// PUT route to update the lesson details in the lesson collection after checkout
 router.put("/lesson", async (req, res) => {
   const { body } = req;
   const data = {
@@ -120,6 +61,7 @@ router.put("/lesson", async (req, res) => {
   }
 });
 
+// GET route to search a specific lesson based on the query sent by the user 
 router.get("/search", async (req, res) => {
   const { search } = req.query;
 
@@ -135,12 +77,14 @@ router.get("/search", async (req, res) => {
             { space: { $regex: search, $options: "i" } },
           ],
         })
+	.sort({subject: 1})
         .toArray();
       res.status(200).json(result);
     } else {
       await db
         .collection("lesson")
         .find()
+	.sort({subject: 1})
         .toArray()
         .then((result) => {
           res.status(200).json(result);
