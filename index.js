@@ -1,10 +1,11 @@
 import express from "express";
+import morgan from "morgan";
 import dotenv from "dotenv";
 import router from "./router/index.js";
 import MongoStore from "connect-mongo";
 import session from "express-session";
 import cors from "cors";
-import logger from "./logger.js";
+
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ app.use(
   })
 );
 
-app.use(logger);
+app.use(morgan('combined');
 
 app.use("/", router);
 
