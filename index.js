@@ -45,7 +45,11 @@ app.use(morgan('combined'));
 app.use("/", router);
 
 // Define route for static file
-app.use("/static", express.static("public"));
+app.use("/static", express.static("public",{fallthrough:true})) ;
+
+app.use("/static/*", (req, res) => {
+	res.status(404).send("Image NOT Found");
+}) 
 
 // Only for local usage only
 app.listen(process.env.PORT, () => {
